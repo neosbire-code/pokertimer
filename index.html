@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEXAS HOLD'EM</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            background: linear-gradient(135deg, #0a3d0a 0%, #1a5a1a 50%, #0f4f0f 100%);
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            padding: 20px;
+        }
+        
+        #chips-display {
+            background: rgba(0,0,0,0.8);
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #ffd700;
+            min-width: 220px;
+            max-width: 280px;
+        }
+        
+        #chips-display h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            text-align: center;
+        }
+        
+        .chip-item {
+            display: flex;
+            align-items: center;
+            margin: 12px 0;
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+        
+        .chip-item.total {
+            background: rgba(255,215,0,0.2);
+            border: 2px solid #ffd700;
+            margin-top: 20px;
+            font-weight: 900;
+        }
+        
+        .chip-color {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            margin-right: 15px;
+            border: 3px solid #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+        }
+        
+        .chip-info {
+            flex: 1;
+        }
+        
+        .chip-value {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        .chip-count {
+            font-size: 1em;
+            color: #aaa;
+            margin-top: 3px;
+        }
+        
+        #main {
+            text-align: center;
+            z-index: 10;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #title {
+            font-size: 2.2em;
+            margin-bottom: 25px;
+            color: #ffd700;
+            font-weight: 900;
+        }
+        
+        #current-level {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+        
+        #level-num {
+            color: #ffd700;
+            font-weight: 900;
+            font-size: 1.2em;
+        }
+        
+        #blinds {
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            color: #00ff00;
+        }
+        
+        #blinds span {
+            font-weight: 700;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+        
+        #countdown {
+            font-size: 10em;
+            font-weight: 900;
+            margin: 30px 0;
+            color: #00ff00;
+            text-shadow: 0 0 30px #00ff00;
+            animation: pulse 1s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.03); }
+        }
+        
+        #ante-info {
+            font-size: 1.4em;
+            color: #ffaa00;
+            margin-top: 15px;
+        }
+        
+        #next-preview {
+            font-size: 1.6em;
+            color: #aaa;
+            margin-top: 25px;
+        }
+        
+        #controls {
+            margin-top: 35px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        button {
+            padding: 18px 30px;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2em;
+            font-weight: 700;
+            background: linear-gradient(45deg, #4a7c59, #2d5a3a);
+            color: #fff;
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        
+        button:hover {
+            background: linear-gradient(45deg, #5a8c69, #3d6a4a);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        #config-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.95);
+            padding: 30px;
+            border-radius: 15px;
+            border: 3px solid #ffd700;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            z-index: 30;
+        }
+        
+        #config-panel h3 {
+            margin-bottom: 20px;
+            color: #ffd700;
+            font-size: 1.8em;
+            text-align: center;
+        }
+        
+        #config-panel h4 {
+            color: #ffd700;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ffd700;
+        }
+        
+        th {
+            background: #2d5a3a;
+            color: #ffd700;
+            font-size: 1.1em;
+        }
+        
+        input {
+            width: 70px;
+            padding: 8px;
+            text-align: center;
+            font-family: inherit;
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid #ffd700;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        
+        #fullscreen-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 12px 18px;
+            font-size: 1.1em;
+        }
+        
+        .paused {
+            filter: grayscale(50%);
+            animation: none;
+        }
+        
+        #status {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 1.3em;
+            color: #00ff00;
+        }
+
+        #config-panel label {
+            font-size: 1.1em;
+        }
+
+        #num-players {
+            width: 80px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chips-display">
+        <h3>🎰 Jetons</h3>
+        <div id="chips-list"></div>
+    </div>
+    
+    <div id="main">
+        <h1 id="title">TEXAS HOLD'EM - POKER NIGHT - 20€</h1>
+        <div id="current-level">Niveau <span id="level-num">1</span></div>
+        <div id="blinds">PB: <span id="sb">5</span> | GB: <span id="bb">10</span></div>
+        <div id="ante-info">Ante: <span id="ante">0</span> (pot: <span id="ante-pot">0</span>)</div>
+        <div id="countdown">30:00</div>
+        <div id="next-preview">Prochain: PB 10 | GB 20</div>
+        
+        <div id="controls">
+            <button id="start-pause">▶️ Démarrer</button>
+            <button id="next">⏭️ Niv. Suiv.</button>
+            <button id="reset">🔄 Reset</button>
+            <button id="config">⚙️ Config</button>
+        </div>
+    </div>
+    
+    <button id="fullscreen-btn" title="Plein écran">📱</button>
+    <div id="status">Prêt</div>
+    
+    <div id="config-panel">
+        <h3>⚙️ Configuration</h3>
+        <label>Nb Joueurs: <input type="number" id="num-players" value="6" min="2" max="12"></label><br><br>
+        
+        <h4>🎰 Valeurs des Jetons</h4>
+        <table id="chips-table">
+            <thead>
+                <tr>
+                    <th>Couleur</th>
+                    <th>Valeur</th>
+                    <th>Qté/joueur</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        
+        <h4>⏱️ Niveaux de Blindes</h4>
+        <table id="levels-table">
+            <thead>
+                <tr>
+                    <th>Niv</th>
+                    <th>PB</th>
+                    <th>GB</th>
+                    <th>Ante</th>
+                    <th>Durée (min)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <button id="save-config">💾 Sauvegarder</button>
+        <button id="load-default">🏠 Défaut (6j/4h)</button>
+        <button id="close-config">❌ Fermer</button>
+    </div>
+
+    <script>
+        let defaultLevels = [
+            {sb: 5, bb: 10, ante: 0, duration: 30},
+            {sb: 10, bb: 20, ante: 0, duration: 30},
+            {sb: 15, bb: 30, ante: 0, duration: 30},
+            {sb: 25, bb: 50, ante: 0, duration: 30},
+            {sb: 50, bb: 100, ante: 10, duration: 30},
+            {sb: 75, bb: 150, ante: 10, duration: 30},
+            {sb: 100, bb: 200, ante: 15, duration: 30},
+            {sb: 150, bb: 300, ante: 25, duration: 30}
+        ];
+        
+        let defaultChips = [
+            {color: '#ffffff', value: 5, count: 10},
+            {color: '#ff0000', value: 10, count: 10},
+            {color: '#00ff00', value: 25, count: 4},
+            {color: '#0066ff', value: 50, count: 4},
+            {color: '#000000', value: 100, count: 2}
+        ];
+        
+        let levels = JSON.parse(JSON.stringify(defaultLevels));
+        let chips = JSON.parse(JSON.stringify(defaultChips));
+        let numPlayers = 6;
+        let currentLevel = 0;
+        let timeLeft = 30 * 60;
+        let timerInterval = null;
+        let isRunning = false;
+        let audioContext = null;
+        
+        const el = {
+            levelNum: document.getElementById('level-num'),
+            sb: document.getElementById('sb'),
+            bb: document.getElementById('bb'),
+            ante: document.getElementById('ante'),
+            antePot: document.getElementById('ante-pot'),
+            countdown: document.getElementById('countdown'),
+            nextPreview: document.getElementById('next-preview'),
+            startPause: document.getElementById('start-pause'),
+            next: document.getElementById('next'),
+            reset: document.getElementById('reset'),
+            config: document.getElementById('config'),
+            configPanel: document.getElementById('config-panel'),
+            levelsTable: document.getElementById('levels-table'),
+            chipsTable: document.getElementById('chips-table'),
+            chipsList: document.getElementById('chips-list'),
+            numPlayers: document.getElementById('num-players'),
+            saveConfig: document.getElementById('save-config'),
+            loadDefault: document.getElementById('load-default'),
+            closeConfig: document.getElementById('close-config'),
+            status: document.getElementById('status'),
+            main: document.getElementById('main'),
+            fullscreenBtn: document.getElementById('fullscreen-btn')
+        };
+        
+        function init() {
+            loadConfig();
+            updateDisplay();
+            updateChipsDisplay();
+            buildConfigTable();
+            buildChipsTable();
+            el.numPlayers.value = numPlayers;
+        }
+        
+        function loadConfig() {
+            const saved = localStorage.getItem('pokerTimerConfig');
+            if (saved) {
+                const config = JSON.parse(saved);
+                levels = config.levels || defaultLevels;
+                chips = config.chips || defaultChips;
+                numPlayers = config.numPlayers || 6;
+            }
+        }
+        
+        function saveConfig() {
+            localStorage.setItem('pokerTimerConfig', JSON.stringify({levels, chips, numPlayers}));
+        }
+        
+        function updateChipsDisplay() {
+            el.chipsList.innerHTML = '';
+            
+            let totalValue = 0;
+            let totalCount = 0;
+            
+            chips.forEach(chip => {
+                const chipDiv = document.createElement('div');
+                chipDiv.className = 'chip-item';
+                const chipTotal = chip.value * chip.count;
+                totalValue += chipTotal;
+                totalCount += chip.count;
+                
+                chipDiv.innerHTML = `
+                    <div class="chip-color" style="background: ${chip.color}"></div>
+                    <div class="chip-info">
+                        <div class="chip-value">${chip.value}</div>
+                        <div class="chip-count">×${chip.count} = ${chipTotal}</div>
+                    </div>
+                `;
+                el.chipsList.appendChild(chipDiv);
+            });
+            
+            const totalDiv = document.createElement('div');
+            totalDiv.className = 'chip-item total';
+            totalDiv.innerHTML = `
+                <div class="chip-color" style="background: linear-gradient(45deg, #ffd700, #ffed4e); border-color: #ffd700;"></div>
+                <div class="chip-info">
+                    <div class="chip-value">TOTAL</div>
+                    <div class="chip-count">×${totalCount} = ${totalValue}</div>
+                </div>
+            `;
+            el.chipsList.appendChild(totalDiv);
+        }
+        
+        function updateDisplay() {
+            if (currentLevel >= levels.length) {
+                el.levelNum.textContent = 'FIN';
+                el.sb.textContent = '🎉';
+                el.bb.textContent = '🎉';
+                el.ante.textContent = '🎉';
+                el.countdown.textContent = 'TERMINÉ !';
+                el.nextPreview.textContent = '';
+                el.status.textContent = 'Partie terminée !';
+                stopTimer();
+                return;
+            }
+            
+            const lvl = levels[currentLevel];
+            el.levelNum.textContent = currentLevel + 1;
+            el.sb.textContent = lvl.sb;
+            el.bb.textContent = lvl.bb;
+            el.ante.textContent = lvl.ante || 0;
+            el.antePot.textContent = (lvl.ante * numPlayers) || 0;
+            
+            if (currentLevel + 1 < levels.length) {
+                const nextLvl = levels[currentLevel + 1];
+                el.nextPreview.textContent = `Prochain: PB ${nextLvl.sb} | GB ${nextLvl.bb}`;
+            } else {
+                el.nextPreview.textContent = 'Niveau Final !';
+            }
+        }
+        
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        function tick() {
+            timeLeft--;
+            el.countdown.textContent = formatTime(timeLeft);
+            
+            if (timeLeft <= 0) {
+                beep(800, 200);
+                nextLevel();
+                if (currentLevel < levels.length) {
+                    timeLeft = levels[currentLevel].duration * 60;
+                }
+            } else if (timeLeft <= 60) {
+                el.countdown.style.color = '#ff4444';
+                if (timeLeft % 10 === 0) beep(600, 100);
+            } else {
+                el.countdown.style.color = '#00ff00';
+            }
+        }
+        
+        function startTimer() {
+            if (!timerInterval) {
+                timerInterval = setInterval(tick, 1000);
+            }
+            isRunning = true;
+            el.startPause.textContent = '⏸️ Pause';
+            el.main.classList.remove('paused');
+            el.status.textContent = `Niveau ${currentLevel + 1} en cours`;
+        }
+        
+        function pauseTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            isRunning = false;
+            el.startPause.textContent = '▶️ Reprendre';
+            el.main.classList.add('paused');
+            el.status.textContent = 'En pause';
+        }
+        
+        function stopTimer() {
+            pauseTimer();
+            el.startPause.textContent = '▶️ Démarrer';
+        }
+        
+        function nextLevel() {
+            currentLevel++;
+            if (currentLevel < levels.length) {
+                timeLeft = levels[currentLevel].duration * 60;
+            }
+            updateDisplay();
+            beep(1000, 500);
+        }
+        
+        function reset() {
+            stopTimer();
+            currentLevel = 0;
+            timeLeft = levels[0].duration * 60;
+            updateDisplay();
+            el.countdown.textContent = formatTime(timeLeft);
+            el.countdown.style.color = '#00ff00';
+            el.status.textContent = 'Prêt';
+        }
+        
+        function beep(frequency = 800, duration = 200) {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'sine';
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration / 1000);
+        }
+        
+        function buildConfigTable() {
+            const tbody = el.levelsTable.querySelector('tbody');
+            tbody.innerHTML = '';
+            levels.forEach((lvl, i) => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${i+1}</td>
+                    <td><input type="number" data-idx="${i}" data-prop="sb" value="${lvl.sb}"></td>
+                    <td><input type="number" data-idx="${i}" data-prop="bb" value="${lvl.bb}"></td>
+                    <td><input type="number" data-idx="${i}" data-prop="ante" value="${lvl.ante || 0}"></td>
+                    <td><input type="number" data-idx="${i}" data-prop="duration" value="${lvl.duration}"></td>
+                `;
+            });
+        }
+        
+        function buildChipsTable() {
+            const tbody = el.chipsTable.querySelector('tbody');
+            tbody.innerHTML = '';
+            chips.forEach((chip, i) => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td><input type="color" data-chip-idx="${i}" data-chip-prop="color" value="${chip.color}" style="width: 90px; height: 35px; cursor: pointer;"></td>
+                    <td><input type="number" data-chip-idx="${i}" data-chip-prop="value" value="${chip.value}"></td>
+                    <td><input type="number" data-chip-idx="${i}" data-chip-prop="count" value="${chip.count}"></td>
+                `;
+            });
+        }
+        
+        el.startPause.onclick = () => isRunning ? pauseTimer() : startTimer();
+        el.next.onclick = nextLevel;
+        el.reset.onclick = reset;
+        el.config.onclick = () => el.configPanel.style.display = 'block';
+        el.closeConfig.onclick = () => el.configPanel.style.display = 'none';
+        
+        el.saveConfig.onclick = () => {
+            const inputs = el.levelsTable.querySelectorAll('input');
+            inputs.forEach(input => {
+                const idx = parseInt(input.dataset.idx);
+                const prop = input.dataset.prop;
+                if (idx !== undefined && prop) {
+                    levels[idx][prop] = parseInt(input.value) || 0;
+                }
+            });
+            
+            const chipInputs = el.chipsTable.querySelectorAll('input');
+            chipInputs.forEach(input => {
+                const idx = parseInt(input.dataset.chipIdx);
+                const prop = input.dataset.chipProp;
+                if (idx !== undefined && prop) {
+                    if (prop === 'value' || prop === 'count') {
+                        chips[idx][prop] = parseInt(input.value) || 0;
+                    } else {
+                        chips[idx][prop] = input.value;
+                    }
+                }
+            });
+            
+            numPlayers = parseInt(el.numPlayers.value) || 6;
+            saveConfig();
+            buildConfigTable();
+            buildChipsTable();
+            updateDisplay();
+            updateChipsDisplay();
+            el.configPanel.style.display = 'none';
+            beep(1200, 300);
+        };
+        
+        el.loadDefault.onclick = () => {
+            levels = JSON.parse(JSON.stringify(defaultLevels));
+            chips = JSON.parse(JSON.stringify(defaultChips));
+            buildConfigTable();
+            buildChipsTable();
+            updateChipsDisplay();
+            saveConfig();
+            reset();
+        };
+        
+        el.fullscreenBtn.onclick = () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                el.fullscreenBtn.textContent = '📴';
+            } else {
+                document.exitFullscreen();
+                el.fullscreenBtn.textContent = '📱';
+            }
+        };
+        
+        window.addEventListener('load', init);
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ') { 
+                e.preventDefault(); 
+                isRunning ? pauseTimer() : startTimer(); 
+            }
+            if (e.key === 'ArrowRight') nextLevel();
+            if (e.key === 'r' || e.key === 'R') reset();
+        });
+    </script>
+</body>
+</html>
