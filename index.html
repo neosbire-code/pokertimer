@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.webmanifest">
+    <script> if ("serviceWorker" in navigator) { navigator.serviceWorker.register("sw.js") .then(() => console.log("Service worker enregistré")) .catch(err => console.error("Erreur SW", err)); } </script>
+
     <title>TEXAS HOLD'EM</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
@@ -656,6 +659,7 @@
             if (e.key === 'ArrowRight') nextLevel();
             if (e.key === 'r' || e.key === 'R') reset();
         });
+        
     </script>
 </body>
 </html>

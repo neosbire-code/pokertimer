@@ -1,0 +1,22 @@
+{
+  "name": "Timer Poker Maison",
+  "short_name": "Poker Timer",
+  "description": "TEXAS HOLD'EM - POKER NIGHT",
+  "start_url": "./index.html"
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "theme_color": "#0f4f0f",
+  "background_color": "#0a3d0a",
+  "icons": [
+    {
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAA2klEQVR4nO2WMQ6DMAxFv1ROnIGewJU4Qk/BCXqCHqGH6A0YGBhgqEQ+kqM2JA5p1UpI/CXLUvP9bBzHBvjnAQwAZuAKTMA5sg0wR/aHiHsXgS3AAXgCL+Ae2QPwALbRs18h7l0E1nH4N3AClpFtE9vZu/2auHflQCVzU/KAs7wfEdeqHKhk9iUPuMj7nnGtyoGezL7kgV75L+JalQM9mUPJAw7y3jCuVTlQyRxLHrCR94dxrcqBSubQ8oCuvB/HtSoHKpmh5AE7eT+Oa1UOlMwHsI9snd5vgPcewA/xBvvycxEq7VqrAAAAAElFTkSuQmCC",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAA2klEQVR4nO2WMQ6DMAxFv1ROnIGewJU4Qk/BCXqCHqGH6A0YGBhgqEQ+kqM2JA5p1UpI/CXLUvP9bBzHBvjnAQwAZuAKTMA5sg0wR/aHiHsXgS3AAXgCL+Ae2QPwALbRs18h7l0E1nH4N3AClpFtE9vZu/2auHflQCVzU/KAs7wfEdeqHKhk9iUPuMj7nnGtyoGezL7kgV75L+JalQM9mUPJAw7y3jCuVTlQyRxLHrCR94dxrcqBSubQ8oCuvB/HtSoHKpmh5AE7eT+Oa1UOlMwHsI9snd5vgPcewA/xBvvycxEq7VqrAAAAAElFTkSuQmCC",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
